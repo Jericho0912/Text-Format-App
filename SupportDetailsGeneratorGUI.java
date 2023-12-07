@@ -7,6 +7,7 @@ import java.awt.*;
 import java.awt.datatransfer.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
@@ -18,6 +19,7 @@ public class SupportDetailsGeneratorGUI {
     private JComboBox<String> statusComboBox;
     private JDatePickerImpl raisedDatePicker, closedDatePicker;
     private JSpinner raisedTimeSpinner, closedTimeSpinner;
+    private JTextArea resultTextArea;
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
@@ -89,7 +91,7 @@ public class SupportDetailsGeneratorGUI {
         gbc.gridwidth = GridBagConstraints.REMAINDER; // Span across both columns
         gbc.fill = GridBagConstraints.BOTH;
 
-        JTextArea resultTextArea = new JTextArea();
+        resultTextArea = new JTextArea();
         panel.add(new JScrollPane(resultTextArea), gbc);
 
         // Copy-Paste button
@@ -119,10 +121,10 @@ public class SupportDetailsGeneratorGUI {
                         "Acknowledge by: " + acknowledgeField.getText() + "\n" +
                         "Status: " + statusComboBox.getSelectedItem() + "\n" +
                         "Resolution: " + resolutionField.getText() + "\n" +
-                        "Date Raised: " + raisedDate + "\n" +
-                        "Time Raised: " + raisedTime + "\n" +
-                        "Date Closed: " + closedDate + "\n" +
-                        "Time Closed: " + closedTime + "\n";
+                        "Date Raised: " + formatDate(raisedDate) + "\n" +
+                        "Time Raised: " + formatTime(raisedTime) + "\n" +
+                        "Date Closed: " + formatDate(closedDate) + "\n" +
+                        "Time Closed: " + formatTime(closedTime) + "\n";
                 resultTextArea.setText(result);
             }
         });
@@ -157,11 +159,20 @@ public class SupportDetailsGeneratorGUI {
         timeSpinner.setValue(new Date()); // set the current time
         return timeSpinner;
     }
-    
+
+    private String formatDate(Date date) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        return dateFormat.format(date);
+    }
+
+    private String formatTime(Date time) {
+        SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a");
+        return timeFormat.format(time);
+    }
 
     private static class DateLabelFormatter extends JFormattedTextField.AbstractFormatter {
         private final String datePattern = "yyyy-MM-dd";
-        private final java.text.SimpleDateFormat dateFormatter = new java.text.SimpleDateFormat(datePattern);
+        private final SimpleDateFormat dateFormatter = new SimpleDateFormat(datePattern);
 
         @Override
         public Object stringToValue(String text) throws java.text.ParseException {
