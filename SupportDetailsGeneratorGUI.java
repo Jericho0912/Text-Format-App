@@ -151,6 +151,7 @@ public class SupportDetailsGeneratorGUI {
                         "Status: " + statusComboBox.getSelectedItem() + "\n" +
                         "Resolution: " + resolutionField.getText() + "\n" +
                         "Date Raised: " + (raisedDate != null ? formatDate(raisedDate) : "") + "\n" +
+                        "Date Raised: " + (raisedDate != null ? formatDate(raisedDate) : "") + "\n" +
                         "Time Raised: " + formatTime(raisedTime) + "\n" +
                         "Date Closed: " + (closedDate != null ? formatDate(closedDate) : "") + "\n" +
                         "Time Closed: " + formatTime(closedTime) + "\n" +
