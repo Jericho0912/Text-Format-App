@@ -15,7 +15,7 @@ import java.util.Properties;
 public class SupportDetailsGeneratorGUI {
 
     private JFrame frame;
-    private JTextField issueField, acknowledgeField, resolutionField;
+    private JTextField issueField, acknowledgeField, resolutionField, issuedForField ;
     private JComboBox<String> statusComboBox;
     private JDatePickerImpl raisedDatePicker, closedDatePicker;
     private JSpinner raisedTimeSpinner, closedTimeSpinner;
@@ -47,7 +47,7 @@ public class SupportDetailsGeneratorGUI {
         gbc.gridx = 0;
 
         panel.add(new JLabel("Issue/Request:"), gbc);
-        panel.add(new JLabel("Acknowledge by:"), gbc);
+        panel.add(new JLabel("Acknowledged by:"), gbc);
         panel.add(new JLabel("Status:"), gbc);
         panel.add(new JLabel("Resolution:"), gbc);
         panel.add(new JLabel("Date Raised:"), gbc);
@@ -115,19 +115,21 @@ public class SupportDetailsGeneratorGUI {
                 Date raisedTime = (Date) raisedTimeSpinner.getValue();
                 Date closedDate = (Date) closedDatePicker.getModel().getValue();
                 Date closedTime = (Date) closedTimeSpinner.getValue();
-
+        
+                // Check if raisedDate and closedDate are not null before formatting
                 String result = "Support Details:\n" +
                         "Issue/Request: " + issueField.getText() + "\n" +
                         "Acknowledge by: " + acknowledgeField.getText() + "\n" +
                         "Status: " + statusComboBox.getSelectedItem() + "\n" +
                         "Resolution: " + resolutionField.getText() + "\n" +
-                        "Date Raised: " + formatDate(raisedDate) + "\n" +
+                        "Date Raised: " + (raisedDate != null ? formatDate(raisedDate) : "") + "\n" +
                         "Time Raised: " + formatTime(raisedTime) + "\n" +
-                        "Date Closed: " + formatDate(closedDate) + "\n" +
+                        "Date Closed: " + (closedDate != null ? formatDate(closedDate) : "") + "\n" +
                         "Time Closed: " + formatTime(closedTime) + "\n";
                 resultTextArea.setText(result);
             }
         });
+        
 
         copyButton.addActionListener(new ActionListener() {
             @Override
