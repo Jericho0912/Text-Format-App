@@ -116,8 +116,14 @@ public class SupportDetailsGeneratorGUI {
         panel.add(new JScrollPane(resultTextArea), gbc);
         remarks.setPreferredSize(new Dimension(200, 60));
 
+        JButton submitButton = new JButton("Submit");
+        gbc.gridx = 0;
+        gbc.gridy = 12; 
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        panel.add(submitButton, gbc);  
+
         // Copy-Paste button
-        gbc.gridy = 12; // Adjusted gridy value
+        gbc.gridy = 16; // Adjusted gridy value
         gbc.gridx = 1;
         gbc.gridwidth = 1; // Span only one column
         gbc.fill = GridBagConstraints.NONE;
@@ -126,10 +132,7 @@ public class SupportDetailsGeneratorGUI {
         JButton copyButton = new JButton("Copy-Paste");
         panel.add(copyButton, gbc);
 
-        JButton submitButton = new JButton("Submit");
-        gbc.gridx = 1;
-        gbc.gridy = 16; 
-        panel.add(submitButton, gbc);
+
 
 
         submitButton.addActionListener(new ActionListener() {
@@ -141,27 +144,36 @@ public class SupportDetailsGeneratorGUI {
                 Date closedTime = (Date) closedTimeSpinner.getValue();
         
                 // Check if raisedDate and closedDate are not null before formatting
-                String result = 
+                String result =
                         "Good Day Ms/Mr :" + issuedForField.getText() + "\n" +
+                                "\n" +
+                                "Support Details:\n" +
+                                "Issue/Request: " + issueField.getText() + "\n" +
+                                "Ticket Request from:" + issuedForField.getText() + "\n" +
+                                "Acknowledged by: " + acknowledgeField.getText() + "\n" +
+                                "Status: " + statusComboBox.getSelectedItem() + "\n" +
+                                "Resolution: " + resolutionField.getText() + "\n" +
+                                "Date Raised: " + (raisedDate != null ? formatDate(raisedDate) : "") + "\n" +
+                                "Time Raised: " + formatTime(raisedTime) + "\n";
+        
+                // Check status and set Date Closed and Time Closed accordingly
+                if ("In Progress".equals(statusComboBox.getSelectedItem()) ||
+                        "Open".equals(statusComboBox.getSelectedItem()) ||
+                        "On Hold".equals(statusComboBox.getSelectedItem())) {
+                    result += "Date Closed: n/a\nTime Closed: n/a\n";
+                } else {
+                    result += "Date Closed: " + (closedDate != null ? formatDate(closedDate) : "") + "\n" +
+                            "Time Closed: " + formatTime(closedTime) + "\n";
+                }
+        
+                result += "Remarks: " + remarks.getText() + "\n" +
                         "\n" +
-                        "Support Details:\n" +
-                        "Issue/Request: " + issueField.getText() + "\n" +
-                        "Ticket Request from:" +issuedForField.getText() + "\n" +
-                        "Acknowledged by: " + acknowledgeField.getText() + "\n" +
-                        "Status: " + statusComboBox.getSelectedItem() + "\n" +
-                        "Resolution: " + resolutionField.getText() + "\n" +
-                        "Date Raised: " + (raisedDate != null ? formatDate(raisedDate) : "") + "\n" +
-                        "Date Raised: " + (raisedDate != null ? formatDate(raisedDate) : "") + "\n" +
-                        "Time Raised: " + formatTime(raisedTime) + "\n" +
-                        "Date Closed: " + (closedDate != null ? formatDate(closedDate) : "") + "\n" +
-                        "Time Closed: " + formatTime(closedTime) + "\n" +
-                        "Remarks: " + remarks.getText() + "\n" +
-                        "\n" +
-                        "Thank you for your patience :)";
-
+                        "Thank you for your patience 😀";
+        
                 resultTextArea.setText(result);
             }
         });
+        
         
 
         copyButton.addActionListener(new ActionListener() {
