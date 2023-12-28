@@ -17,6 +17,7 @@ Here are the contents of the zip file:
 
 
 **Step 4:** Fill out each field for the information needed. 
+
 ![image](https://github.com/Jericho0912/Text-Format-App/assets/74029983/f7ff7400-342c-4397-a072-69064118ff9e)
 
 **Step 5:** After filling out the fields, you may now press SUBMIT.
