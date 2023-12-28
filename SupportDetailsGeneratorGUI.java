@@ -1,28 +1,41 @@
+// Make a way to clear the details for the entered details
+// how to automate it in the OSTicket
+
+
+// 
+
+
+
+// this project is Created by Jericho G. Del Rosario
+
+
+
+
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.datatransfer.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
+import java.util.Calendar;
 import java.util.Properties;
 
+
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Clipboard;
 public class SupportDetailsGeneratorGUI {
 
     private JFrame frame;
-    private JTextField issueField, acknowledgeField, resolutionField, issuedForField, remarks ;
+    private JTextField issueField, acknowledgeField, resolutionField, issuedForField, remarks;
     private JComboBox<String> statusComboBox;
     private JDatePickerImpl raisedDatePicker, closedDatePicker;
     private JSpinner raisedTimeSpinner, closedTimeSpinner;
     private JTextArea resultTextArea;
+    private SupportDetailsLogger logger;
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
@@ -35,6 +48,8 @@ public class SupportDetailsGeneratorGUI {
     }
 
     public void initialize() {
+        String logFilePath = askForLogFilePath();
+        SupportDetailsLogger logger = new SupportDetailsLogger(logFilePath);
         frame = new JFrame();
         frame.setBounds(100, 100, 500, 700);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -66,7 +81,7 @@ public class SupportDetailsGeneratorGUI {
         issueField = new JTextField();
         gbc.gridwidth = 2; // Span across 2 columns
         panel.add(issueField, gbc);
-        
+
         issuedForField = new JTextField();
         gbc.gridwidth = 2; // Span across 2 columns
         panel.add(issuedForField, gbc);
@@ -92,18 +107,18 @@ public class SupportDetailsGeneratorGUI {
 
         closedTimeSpinner = createTimeSpinner();
         panel.add(closedTimeSpinner, gbc);
-        
+
         // remarks = new JTextField();
         // panel.add(remarks,gbc);
         gbc.gridy = 9; // Adjust the gridy value as needed
         gbc.gridx = 0;
         JLabel remarksLabel = new JLabel("Remarks:");
-        panel.add(remarksLabel, gbc);       
+        panel.add(remarksLabel, gbc);
         //remarks
         gbc.gridy = 10; // Adjust the gridy value as needed
         gbc.gridx = 0;
         gbc.gridwidth = GridBagConstraints.REMAINDER;
-        JTextField remarks = new JTextField();
+        remarks = new JTextField();
         panel.add(remarks, gbc);
 
         // Text area
@@ -118,9 +133,9 @@ public class SupportDetailsGeneratorGUI {
 
         JButton submitButton = new JButton("Submit");
         gbc.gridx = 0;
-        gbc.gridy = 12; 
+        gbc.gridy = 12;
         gbc.gridwidth = GridBagConstraints.REMAINDER;
-        panel.add(submitButton, gbc);  
+        panel.add(submitButton, gbc);
 
         // Copy-Paste button
         gbc.gridy = 16; // Adjusted gridy value
@@ -132,9 +147,6 @@ public class SupportDetailsGeneratorGUI {
         JButton copyButton = new JButton("Copy-Paste");
         panel.add(copyButton, gbc);
 
-
-
-
         submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -142,7 +154,7 @@ public class SupportDetailsGeneratorGUI {
                 Date raisedTime = (Date) raisedTimeSpinner.getValue();
                 Date closedDate = (Date) closedDatePicker.getModel().getValue();
                 Date closedTime = (Date) closedTimeSpinner.getValue();
-        
+
                 // Check if raisedDate and closedDate are not null before formatting
                 String result =
                         "Good Day Ms/Mr :" + issuedForField.getText() + "\n" +
@@ -155,7 +167,7 @@ public class SupportDetailsGeneratorGUI {
                                 "Resolution: " + resolutionField.getText() + "\n" +
                                 "Date Raised: " + (raisedDate != null ? formatDate(raisedDate) : "") + "\n" +
                                 "Time Raised: " + formatTime(raisedTime) + "\n";
-        
+
                 // Check status and set Date Closed and Time Closed accordingly
                 if ("In Progress".equals(statusComboBox.getSelectedItem()) ||
                         "Open".equals(statusComboBox.getSelectedItem()) ||
@@ -165,16 +177,15 @@ public class SupportDetailsGeneratorGUI {
                     result += "Date Closed: " + (closedDate != null ? formatDate(closedDate) : "") + "\n" +
                             "Time Closed: " + formatTime(closedTime) + "\n";
                 }
-        
+
                 result += "Remarks: " + remarks.getText() + "\n" +
                         "\n" +
                         "Thank you for your patience 😀";
-        
+
                 resultTextArea.setText(result);
+                logger.logDetails("Generated Support Details:\n" + result);
             }
         });
-        
-        
 
         copyButton.addActionListener(new ActionListener() {
             @Override
@@ -188,7 +199,20 @@ public class SupportDetailsGeneratorGUI {
 
         frame.setVisible(true);
     }
-
+    private String askForLogFilePath() {
+        String logFilePath = null;
+    
+        // Display a dialog prompt for the user to enter the log file path
+        while (logFilePath == null || logFilePath.trim().isEmpty()) {
+            Object[] message = {"Enter the path where you want to save the log file:"};
+            logFilePath = JOptionPane.showInputDialog(frame, message, "Log File Path", JOptionPane.QUESTION_MESSAGE);
+            if (logFilePath == null) {
+                // User clicked Cancel, exit the application or handle accordingly
+                System.exit(0);
+            }
+        }
+        return logFilePath;
+    }
     private JDatePickerImpl createDatePicker() {
         UtilDateModel model = new UtilDateModel();
         Properties properties = new Properties();
